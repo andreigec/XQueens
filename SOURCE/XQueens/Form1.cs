@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using ANDREICSLIB;
+using XQueens.ServiceReference1;
 
 namespace XQueens
 {
@@ -15,12 +16,8 @@ namespace XQueens
         #region licensing
 
         private const string AppTitle = "XQueens";
-        private const double AppVersion = 0.2;
+        private const double AppVersion = 0.3;
         private const String HelpString = "";
-
-        private const String UpdatePath = "https://github.com/EvilSeven/XQueens/zipball/master";
-        private const String VersionPath = "https://raw.github.com/EvilSeven/XQueens/master/INFO/version.txt";
-        private const String ChangelogPath = "https://raw.github.com/EvilSeven/XQueens/master/INFO/changelog.txt";
 
         private readonly String OtherText =
             @"©" + DateTime.Now.Year +
@@ -44,7 +41,7 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 
             grid.clearControls();
 
-            var ct = pieceboard.ChesstypesFromString(chesstype.Text);
+            var ct = Pieceboard.ChesstypesFromString(chesstype.Text);
             controller.CreateMatrix(w, h, ct, grid);  
         }
 
@@ -60,7 +57,7 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 
 		private void solvebutton_Click(object sender, EventArgs e)
 		{
-		    var ct = pieceboard.ChesstypesFromString(chesstype.Text);
+		    var ct = Pieceboard.ChesstypesFromString(chesstype.Text);
             controller.ApplySolve(ct);
 		}
 
@@ -68,26 +65,26 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 		{
 			if (chesstype.Text.Length > 0 && controller.IsPlaying())
 			{
-                var ct = pieceboard.ChesstypesFromString(chesstype.Text);
+                var ct = Pieceboard.ChesstypesFromString(chesstype.Text);
                 controller.ChangeType(ct);
 			}
 		}
 
 		private void widthtext_KeyPress_1(object sender, KeyPressEventArgs e)
 		{
-			e.Handled = TextboxUpdates.HandleInput(TextboxUpdates.InputType.Create(false,true,false,false),e.KeyChar,widthtext);
+            e.Handled = TextboxExtras.HandleInput(TextboxExtras.InputType.Create(false, true, false, false), e.KeyChar, widthtext);
 		}
 
 		private void heighttext_KeyPress(object sender, KeyPressEventArgs e)
 		{
-            e.Handled = TextboxUpdates.HandleInput(TextboxUpdates.InputType.Create(false, true, false, false), e.KeyChar, heighttext);
+            e.Handled = TextboxExtras.HandleInput(TextboxExtras.InputType.Create(false, true, false, false), e.KeyChar, heighttext);
 		}
 
         private void InitChessTypes()
         {
-            foreach (pieceboard.chesstypes ct in Enum.GetValues(typeof(pieceboard.chesstypes)))
+            foreach (Pieceboard.Chesstypes ct in Enum.GetValues(typeof(Pieceboard.Chesstypes)))
             {
-                if (ct == pieceboard.chesstypes.NOTYPE)
+                if (ct == Pieceboard.Chesstypes.Notype)
                     continue;
                 chesstype.Items.Add(ct.ToString());
             }
@@ -99,8 +96,36 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 		    InitChessTypes();
 		    CreateMatrix();
 
-            Licensing.CreateLicense(this, HelpString, AppTitle, AppVersion, OtherText, VersionPath, UpdatePath, ChangelogPath, menuStrip1);
+            Licensing.CreateLicense(this, menuStrip1, new Licensing.SolutionDetails(GetDetails, HelpString, AppTitle, AppVersion, OtherText));
 		}
+
+        public Licensing.DownloadedSolutionDetails GetDetails()
+        {
+            try
+            {
+                var sr = new ServicesClient();
+                var ti = sr.GetTitleInfo(AppTitle);
+                if (ti == null)
+                    return null;
+                return ToDownloadedSolutionDetails(ti);
+
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+        public static Licensing.DownloadedSolutionDetails ToDownloadedSolutionDetails(TitleInfoServiceModel tism)
+        {
+            return new Licensing.DownloadedSolutionDetails()
+            {
+                ZipFileLocation = tism.LatestTitleDownloadPath,
+                ChangeLog = tism.LatestTitleChangelog,
+                Version = tism.LatestTitleVersion
+            };
+        }
+
 
         private void exitToolStripMenuItem_Click_2(object sender, EventArgs e)
         {

@@ -1,5 +1,0 @@
-Version 0.2
-Changed to use GITHub
-
-Version 0.1
-Initial Release

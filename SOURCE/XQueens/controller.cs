@@ -10,8 +10,8 @@ namespace XQueens
 {
     public class controller
     {
-        public static pieceboard Main;
-        public static PanelUpdates grid;
+        public static Pieceboard Main;
+        public static PanelReplacement grid;
 
         public static bool IsPlaying()
         {
@@ -24,13 +24,13 @@ namespace XQueens
             ApplyColour();
         }
 
-        public static void ChangeType(pieceboard.chesstypes ct)
+        public static void ChangeType(Pieceboard.Chesstypes ct)
         {
-            Main.thistype = ct;
+            Main.Thistype = ct;
             OverlayPossibleMoves();
         }
 
-        public static void ApplySolve(pieceboard.chesstypes ct)
+        public static void ApplySolve(Pieceboard.Chesstypes ct)
         {
             var ret = Main.solveH(ct);
             if (ret.Count == 0)
@@ -48,7 +48,7 @@ namespace XQueens
             var y = int.Parse(s.Substring(0, s.IndexOf(':')));
             var x = int.Parse(s.Substring(s.IndexOf(':') + 1));
             //if blocked by another piece, cant place
-            if (Main.GridBlocked[y][x] > 0 && Main.GridPieces[y][x] == pieceboard.chesstypes.NOTYPE)
+            if (Main.GridBlocked[y][x] > 0 && Main.GridPieces[y][x] == Pieceboard.Chesstypes.Notype)
                 return;
             var set = TB.Text.Length == 0;
             Main.applypiece(x, y, set);
@@ -56,7 +56,7 @@ namespace XQueens
             ApplyColour();
         }
 
-        public static void CreateMatrix(int width, int height,pieceboard.chesstypes CT,PanelUpdates Grid)
+        public static void CreateMatrix(int width, int height,Pieceboard.Chesstypes CT,PanelReplacement Grid)
         {
             if (Main!=null)
             {
@@ -65,7 +65,7 @@ namespace XQueens
             }
             
             grid = Grid;
-            Main= new pieceboard(width, height) { thistype = CT };
+            Main= new Pieceboard(width, height) { Thistype = CT };
             Main.GridBlocked = new short[height][];
             for (var y = 0; y < height; y++)
             {
@@ -80,18 +80,18 @@ namespace XQueens
                     grid.addControl(TB, x != (width - 1));
                 }
             }
-            Main.GridPieces = MatrixOps.CreateMatrix<pieceboard.chesstypes>(width, height);
+            Main.GridPieces = MatrixOps.CreateMatrix<Pieceboard.Chesstypes>(width, height);
             ApplyColour();
         }
 
         private static void OverlayPossibleMoves()
         {
             var goodV = 0;
-            for (var y = 0; y < Main.height; y++)
+            for (var y = 0; y < Main.Height; y++)
             {
-                for (var x = 0; x < Main.width; x++)
+                for (var x = 0; x < Main.Width; x++)
                 {
-                    if (Main.GridPieces[y][x] != pieceboard.chesstypes.NOTYPE || Main.GridBlocked[y][x] > 0)
+                    if (Main.GridPieces[y][x] != Pieceboard.Chesstypes.Notype || Main.GridBlocked[y][x] > 0)
                         continue;
 
                     var good = Main.applypiece(x, y, true);
@@ -112,7 +112,7 @@ namespace XQueens
             {
                 var b = grid.getControlByName(GetName(x, y)) as Button;
                 b.BackColor = Color.Tomato;
-                if (Main.GridPieces[y][x] == pieceboard.chesstypes.NOTYPE)
+                if (Main.GridPieces[y][x] == Pieceboard.Chesstypes.Notype)
                     b.Enabled = false;
                 else
                     b.BackColor = Color.Gold;
@@ -125,11 +125,11 @@ namespace XQueens
             }
         }
 
-        private static void ClearColours(PanelUpdates grid)
+        private static void ClearColours(PanelReplacement grid)
         {
-            for (var y = 0; y < Main.height; y++)
+            for (var y = 0; y < Main.Height; y++)
             {
-                for (var x = 0; x < Main.width; x++)
+                for (var x = 0; x < Main.Width; x++)
                 {
                     ApplyColourCell(x, y, false);
                 }
@@ -138,19 +138,19 @@ namespace XQueens
 
         private static void ApplyColour()
         {
-            for (var y = 0; y < Main.height; y++)
+            for (var y = 0; y < Main.Height; y++)
             {
-                for (var x = 0; x < Main.width; x++)
+                for (var x = 0; x < Main.Width; x++)
                 {
                     var TB = grid.getControlByName(GetName(x, y)) as Button;
                     if (TB == null)
                         continue;
 
-                    var bad = Main.GridBlocked[y][x] > 0 || Main.GridPieces[y][x] != pieceboard.chesstypes.NOTYPE;
+                    var bad = Main.GridBlocked[y][x] > 0 || Main.GridPieces[y][x] != Pieceboard.Chesstypes.Notype;
                     ApplyColourCell(x, y, bad);
 
-                    if (Main.GridPieces[y][x] != pieceboard.chesstypes.NOTYPE)
-                        TB.Text = pieceboard.ChesstypesToCharIdent(Main.GridPieces[y][x]);
+                    if (Main.GridPieces[y][x] != Pieceboard.Chesstypes.Notype)
+                        TB.Text = Pieceboard.ChesstypesToCharIdent(Main.GridPieces[y][x]);
                     else
                         TB.Text = "";
                 }

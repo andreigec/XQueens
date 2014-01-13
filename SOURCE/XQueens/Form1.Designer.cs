@@ -43,7 +43,7 @@ namespace XQueens
             this.chesstype = new System.Windows.Forms.ComboBox();
             this.clearbutton = new System.Windows.Forms.Button();
             this.solvebutton = new System.Windows.Forms.Button();
-            this.grid = new ANDREICSLIB.PanelUpdates();
+            this.grid = new ANDREICSLIB.PanelReplacement();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -196,7 +196,7 @@ namespace XQueens
         private Button clearbutton;
         private ToolStripMenuItem exitToolStripMenuItem;
         private ToolStripMenuItem fileToolStripMenuItem;
-        private PanelUpdates grid;
+        private PanelReplacement grid;
         private TextBox heighttext;
         private Label label2;
         private MenuStrip menuStrip1;

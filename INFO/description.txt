@@ -1,1 +1,0 @@
-XQueens generalises and solves the 8 queens problem with variable matrix sizes, and mixed chess pieces.
