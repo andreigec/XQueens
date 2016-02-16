@@ -1,6 +1,6 @@
 XQueens
 =======
-XQueens generalises and solves the 8 queens problem with variable matrix sizes, and mixed chess pieces.
+XQueens generalises and solves the 8 queens game problem with variable matrix sizes, and mixed chess pieces.
 
 Images
 ======
